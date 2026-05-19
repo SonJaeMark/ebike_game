@@ -3,7 +3,8 @@ from system.audio_system import init_audio, play_move_sound
 from entities.ebike import Ebike
 from entities.obstacles.obstacles import Obstacles
 from entities.obstacles.obs import ObstaclesEnum  
-from core.settings import WIDTH, HEIGHT, FPS, player_size, player_x, player_y, player_speed, ebike_size, obstacle_y_pos
+from core.settings import WIDTH, HEIGHT, FPS, player_size, player_x, player_y, player_speed, ebike_size, obstacle_y_pos, life_points, ebike_size, obstacle_size
+
 pygame.init()
 init_audio()
 
@@ -23,8 +24,8 @@ ROAD_WIDTH = NUM_LANES * LANE_WIDTH
 ROAD_X = (WIDTH - ROAD_WIDTH) // 2
 
 # ================= PLAYER SETTINGS =================
-PLAYER_SIZE = 128
-
+PLAYER_SIZE = ebike_size
+life_remaining = life_points
 # ================= LOAD OBJECTS =================
 ebike = Ebike()
 obstacle = Obstacles()
@@ -38,7 +39,7 @@ try:
 
     cat_img = pygame.transform.scale(
         cat_img,
-        (PLAYER_SIZE, PLAYER_SIZE)
+        (obstacle_size, obstacle_size)
     )
 
 except Exception as e:
@@ -46,7 +47,7 @@ except Exception as e:
     print("Image loading error:", e)
 
     cat_img = pygame.Surface(
-        (PLAYER_SIZE, PLAYER_SIZE)
+        (obstacle_size, obstacle_size)
     )
 
     cat_img.fill((0, 0, 255))

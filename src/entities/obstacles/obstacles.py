@@ -11,15 +11,15 @@ class Obstacles:
 
     def __init__(self):
         self.size = player_size
-        self.speed = 6
+        self.speed = 2
         self.x = 0
-        self.y = -self.size
+        self.y = obstacle_y_pos
         self.type = None
         self.image = None
         self.reset()
 
     def reset(self):
-        self.y = -self.size
+        self.y = obstacle_y_pos
         self.type = random.choice(list(ObstaclesEnum))
         self.randomize_x_position()
         self.load_image()

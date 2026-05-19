@@ -14,3 +14,7 @@ player_y = HEIGHT // 1.5
 player_speed = 5
 ebike_size = (128, 192)
 obstacle_y_pos = HEIGHT // 4
+
+obstacle_size = 64
+
+life_points = 3
