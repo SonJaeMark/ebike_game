@@ -53,6 +53,9 @@ while running:
     # ================= DRAW =================
     screen.fill((30, 30, 30))
 
+    pygame.draw.rect(screen, (255, 0, 0), (0, 0, 250, HEIGHT))
+    pygame.draw.rect(screen, (255, 0, 0), (WIDTH - 250, 0, 250, HEIGHT))                 
+
     # Draw player image
     # screen.blit(player_img, (player_x, player_y))
     ebike.draw(screen, player_x, player_y)
