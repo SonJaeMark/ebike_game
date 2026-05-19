@@ -1,5 +1,6 @@
 import pygame
 from core.settings import WIDTH, HEIGHT, FPS, player_size, player_x, player_y, player_speed
+from entities.ebike import Ebike
 
 pygame.init()
 
@@ -11,8 +12,10 @@ clock = pygame.time.Clock()
 running = True
 
 # player_img = pygame.image.load('src/assets/dog.png').convert_alpha()
-player_img = pygame.transform.scale(pygame.image.load('src/assets/dog.png').convert_alpha(), (player_size, player_size))
+# player_img = pygame.transform.scale(pygame.image.load('src/assets/dog.png').convert_alpha(), (player_size, player_size))
 cat_img = pygame.transform.scale(pygame.image.load('src/assets/cat.png').convert_alpha(), (player_size, player_size))
+
+ebike = Ebike()
 
 try:
     player_img = pygame.transform.scale(player_img, (player_size, player_size))
@@ -51,7 +54,8 @@ while running:
     screen.fill((30, 30, 30))
 
     # Draw player image
-    screen.blit(player_img, (player_x, player_y))
+    # screen.blit(player_img, (player_x, player_y))
+    ebike.draw(screen, player_x, player_y)
 
     # Draw cat image
     screen.blit(cat_img, (player_x + 100, player_y))
