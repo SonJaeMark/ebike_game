@@ -1,69 +1,145 @@
 import pygame
 from system.audio_system import init_audio, play_move_sound
-from core.settings import WIDTH, HEIGHT, FPS, player_size, player_x, player_y, player_speed, obstacle_y_pos
 from entities.ebike import Ebike
 from entities.obstacles.obstacles import Obstacles
 from entities.obstacles.obs import ObstaclesEnum  
 pygame.init()
 init_audio()
 
+# ================= WINDOW SETTINGS =================
+WIDTH = 1280
+HEIGHT = 720
+FPS = 60
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("My Pygame Project")
+pygame.display.set_caption("E-Bike Game")
 
 clock = pygame.time.Clock()
 
-running = True
+# ================= ROAD SETTINGS =================
+BORDER_WIDTH = 250
 
-# player_img = pygame.image.load('src/assets/dog.png').convert_alpha()
-# player_img = pygame.transform.scale(pygame.image.load('src/assets/dog.png').convert_alpha(), (player_size, player_size))
-cat_img = pygame.transform.scale(pygame.image.load('src/assets/cat.png').convert_alpha(), (player_size, player_size))
+NUM_LANES = 4
+LANE_WIDTH = 195
+LANE_PADDING = 10
 
+ROAD_WIDTH = NUM_LANES * LANE_WIDTH
+ROAD_X = (WIDTH - ROAD_WIDTH) // 2
+
+# ================= PLAYER SETTINGS =================
+PLAYER_SIZE = 128
+
+# ================= LOAD OBJECTS =================
 ebike = Ebike()
-obstacles = Obstacles()
+
+# ================= LOAD IMAGES =================
 try:
-    # player_img = pygame.transform.scale(player_img, (player_size, player_size))
-    cat_img = pygame.transform.scale(cat_img, (player_size, player_size))
+
+    cat_img = pygame.image.load(
+        "src/assets/cat.png"
+    ).convert_alpha()
+
+    cat_img = pygame.transform.scale(
+        cat_img,
+        (PLAYER_SIZE, PLAYER_SIZE)
+    )
+
 except Exception as e:
-    print(f"Error loading images: {e}")
-    # player_img = pygame.Surface((player_size, player_size))
-    # player_img.fill((255, 0, 0))
-    cat_img = pygame.Surface((player_size, player_size))
+
+    print("Image loading error:", e)
+
+    cat_img = pygame.Surface(
+        (PLAYER_SIZE, PLAYER_SIZE)
+    )
+
     cat_img.fill((0, 0, 255))
 
+# ================= GAME LOOP =================
+running = True
+
 while running:
+
     dt = clock.tick(FPS)
 
+    # ================= EVENTS =================
     for event in pygame.event.get():
+
         if event.type == pygame.QUIT:
             running = False
 
-    keys = pygame.key.get_pressed()
-
-    if keys[pygame.K_w] or keys[pygame.K_UP]:
-        player_y -= player_speed
-
-    if keys[pygame.K_s] or keys[pygame.K_DOWN]:
-        player_y += player_speed
-
-    if keys[pygame.K_a] or keys[pygame.K_LEFT]:
-        player_x -= player_speed
-        play_move_sound()
-
-    if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
-        player_x += player_speed
-        play_move_sound()
+        ebike.move(event, play_move_sound)
 
     # ================= DRAW =================
-    screen.fill((30, 30, 30))
+    screen.fill((60, 60, 60))
 
-    # Draw player image
-    # screen.blit(player_img, (player_x, player_y))
-    ebike.draw(screen, player_x, player_y)
+    # LEFT BORDER
+    pygame.draw.rect(
+        screen,
+        (255, 0, 0),
+        (0, 0, BORDER_WIDTH, HEIGHT)
+    )
+    # RIGHT BORDER
+    pygame.draw.rect(
+        screen,
+        (255, 0, 0),
+        (
+            WIDTH - BORDER_WIDTH,
+            0,
+            BORDER_WIDTH,
+            HEIGHT
+        )
+    )
 
-    # Draw cat image
-    obstacles.draw(screen, ObstaclesEnum.CAT)
-    obstacles.draw(screen, ObstaclesEnum.DOG)
+    # ROAD
+    pygame.draw.rect(
+        screen,
+        (90, 90, 90),
+        (
+            ROAD_X,
+            0,
+            ROAD_WIDTH,
+            HEIGHT
+        )
+    )
+
+    # LANE LINES
+    for i in range(1, NUM_LANES):
+
+        x = ROAD_X + (i * LANE_WIDTH)
+
+        pygame.draw.line(
+            screen,
+            (255, 255, 0),
+            (x, 0),
+            (x, HEIGHT),
+            4
+        )
+
+    # LANE PADDING VISUAL
+    for i in range(NUM_LANES):
+
+        lane_x = ROAD_X + (i * LANE_WIDTH)
+
+        pygame.draw.rect(
+            screen,
+            (120, 120, 120),
+            (
+                lane_x + LANE_PADDING,
+                0,
+                LANE_WIDTH - (LANE_PADDING * 2),
+                HEIGHT
+            ),
+            1
+        )
+
+    # DRAW EBIKE
+    ebike.draw(screen)
+
+    # DRAW CAT
+    screen.blit(
+        cat_img,
+        (ebike.x, ebike.y - 140)
+    )
 
     pygame.display.flip()
 
