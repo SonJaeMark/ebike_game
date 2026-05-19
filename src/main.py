@@ -3,13 +3,9 @@ from system.audio_system import init_audio, play_move_sound
 from entities.ebike import Ebike
 from entities.obstacles.obstacles import Obstacles
 from entities.obstacles.obs import ObstaclesEnum  
+from core.settings import WIDTH, HEIGHT, FPS, player_size, player_x, player_y, player_speed, ebike_size, obstacle_y_pos
 pygame.init()
 init_audio()
-
-# ================= WINDOW SETTINGS =================
-WIDTH = 1280
-HEIGHT = 720
-FPS = 60
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("E-Bike Game")
@@ -31,6 +27,7 @@ PLAYER_SIZE = 128
 
 # ================= LOAD OBJECTS =================
 ebike = Ebike()
+obstacle = Obstacles()
 
 # ================= LOAD IMAGES =================
 try:
@@ -132,14 +129,12 @@ while running:
             1
         )
 
+    
+    # DRAW RANDOM OBSTACLE
+    obstacle.draw(screen)
+
     # DRAW EBIKE
     ebike.draw(screen)
-
-    # DRAW CAT
-    screen.blit(
-        cat_img,
-        (ebike.x, ebike.y - 140)
-    )
 
     pygame.display.flip()
 
