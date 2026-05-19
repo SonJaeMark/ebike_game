@@ -11,8 +11,18 @@ clock = pygame.time.Clock()
 running = True
 
 # player_img = pygame.image.load('src/assets/dog.png').convert_alpha()
-player_img = pygame.transform.scale(pygame.image.load('src/assets/dog.png').convert_alpha(), (64, 64))
+player_img = pygame.transform.scale(pygame.image.load('src/assets/dog.png').convert_alpha(), (player_size, player_size))
+cat_img = pygame.transform.scale(pygame.image.load('src/assets/cat.png').convert_alpha(), (player_size, player_size))
 
+try:
+    player_img = pygame.transform.scale(player_img, (player_size, player_size))
+    cat_img = pygame.transform.scale(cat_img, (player_size, player_size))
+except Exception as e:
+    print(f"Error loading images: {e}")
+    player_img = pygame.Surface((player_size, player_size))
+    player_img.fill((255, 0, 0))  # Fallback: red square
+    cat_img = pygame.Surface((player_size, player_size))
+    cat_img.fill((0, 0, 255))  # Fallback: blue square
 
 while running:
     dt = clock.tick(FPS)
@@ -42,6 +52,9 @@ while running:
 
     # Draw player image
     screen.blit(player_img, (player_x, player_y))
+
+    # Draw cat image
+    screen.blit(cat_img, (player_x + 100, player_y))
 
     pygame.display.flip()
 
