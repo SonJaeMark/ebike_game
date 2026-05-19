@@ -10,7 +10,9 @@ clock = pygame.time.Clock()
 
 running = True
 
-player_img = pygame.image.load('src/assets/dog.png').convert_alpha()
+# player_img = pygame.image.load('src/assets/dog.png').convert_alpha()
+player_img = pygame.transform.scale(pygame.image.load('src/assets/dog.png').convert_alpha(), (64, 64))
+
 
 while running:
     dt = clock.tick(FPS)
