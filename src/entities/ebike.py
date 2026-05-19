@@ -40,7 +40,7 @@ class Ebike:
 
         # ================= IMAGE =================
         self.image = pygame.image.load(
-            'src/assets/ebike.png'
+            'src/assets/images/vehicle/ebike.png' 
         ).convert_alpha()
 
         self.image = pygame.transform.scale(

@@ -5,8 +5,8 @@ from entities.obstacles.obs import ObstaclesEnum
 
 class Obstacles:
     IMAGE_PATHS = {
-        ObstaclesEnum.CAT: 'src/assets/cat.png',
-        ObstaclesEnum.DOG: 'src/assets/dog.png',
+        ObstaclesEnum.CAT: 'src/assets/images/obstacle/cat.png',
+        ObstaclesEnum.DOG: 'src/assets/images/obstacle/dog.png',
     }
 
     def __init__(self):
