@@ -1,8 +1,9 @@
 import pygame
 from system.audio_system import init_audio, play_move_sound
-from core.settings import WIDTH, HEIGHT, FPS, player_size, player_x, player_y, player_speed
+from core.settings import WIDTH, HEIGHT, FPS, player_size, player_x, player_y, player_speed, obstacle_y_pos
 from entities.ebike import Ebike
-
+from entities.obstacles.obstacles import Obstacles
+from entities.obstacles.obs import ObstaclesEnum  
 pygame.init()
 init_audio()
 
@@ -19,7 +20,7 @@ running = True
 cat_img = pygame.transform.scale(pygame.image.load('src/assets/cat.png').convert_alpha(), (player_size, player_size))
 
 ebike = Ebike()
-
+obstacles = Obstacles()
 try:
     # player_img = pygame.transform.scale(player_img, (player_size, player_size))
     cat_img = pygame.transform.scale(cat_img, (player_size, player_size))
@@ -61,7 +62,8 @@ while running:
     ebike.draw(screen, player_x, player_y)
 
     # Draw cat image
-    screen.blit(cat_img, (player_x + 100, player_y))
+    obstacles.draw(screen, ObstaclesEnum.CAT)
+    obstacles.draw(screen, ObstaclesEnum.DOG)
 
     pygame.display.flip()
 
