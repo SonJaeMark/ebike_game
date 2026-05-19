@@ -10,6 +10,8 @@ clock = pygame.time.Clock()
 
 running = True
 
+player_img = pygame.image.load('src/assets/dog.png').convert_alpha()
+
 while running:
     dt = clock.tick(FPS)
 
@@ -36,12 +38,8 @@ while running:
     # ================= DRAW =================
     screen.fill((30, 30, 30))
 
-    # Draw square
-    pygame.draw.rect(
-        screen,
-        (0, 255, 0),
-        (player_x, player_y, player_size, player_size)
-    )
+    # Draw player image
+    screen.blit(player_img, (player_x, player_y))
 
     pygame.display.flip()
 
