@@ -31,6 +31,9 @@ EBIKE_LANE_B_CENTERLINE = (615.62, 100)
 EBIKE_LANE_C_CENTERLINE = (664.38, 100)
 EBIKE_LANE_D_CENTERLINE = (713.12, 100)
 
+difficulty_speed_multiplier = 2
+difficulty_speed_base = 2.0
+
 player_size = 64
 player_x = WIDTH // 2
 player_y = HEIGHT // 1.5

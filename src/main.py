@@ -6,8 +6,7 @@ from entities.obstacles.obs import ObstaclesEnum
 from core.settings import WIDTH, HEIGHT, FPS, ebike_size, life_points
 
 # Import your road polygon definitions from settings
-# Ensure these match your actual files
-from core.settings import ROAD_A, ROAD_B, ROAD_C, ROAD_D
+from core.settings import ROAD_A, ROAD_B, ROAD_C, ROAD_D, difficulty_speed_base
 
 pygame.init()
 init_audio()
@@ -18,15 +17,12 @@ pygame.display.set_caption("E-Bike Game")
 clock = pygame.time.Clock()
 
 # ================= ROAD SETTINGS =================
-# We group the coordinates into a list for easy drawing iterations
-# Helper function to adjust coordinates if Y=0 needs to be the bottom of the screen
 def map_coords(lane_coords):
     return [
         (x, HEIGHT if y == 0 else y) 
         for x, y in lane_coords
     ]
 
-# Processed lane polygons
 LANES_TO_DRAW = [
     map_coords(ROAD_A),
     map_coords(ROAD_B),
@@ -37,6 +33,10 @@ LANES_TO_DRAW = [
 BORDER_WIDTH = 250
 PLAYER_SIZE = ebike_size
 life_remaining = life_points
+
+# --- LANE ANIMATION CONFIGURATION ---
+road_offset = 0.0
+road_speed = difficulty_speed_base  # Increase to go faster, decrease to go slower
 
 # ================= LOAD OBJECTS =================
 ebike = Ebike()
@@ -55,34 +55,57 @@ while running:
             running = False
         ebike.move(event, play_move_sound)
 
+    # --- Update Road Animation State ---
+    # Convert speed relative to frame rate to maintain consistency
+    road_offset += (road_speed * (dt / 1000.0))
+    if road_offset >= 1.0:
+        road_offset -= 1.0
+
     # ================= DRAW =================
-    screen.fill((135, 206, 235)) # Default background/landscape
+    screen.fill((135, 206, 235)) # Sky/Landscape Backdrop
 
     # 1. DRAW PERSPECTIVE ROADS (Using Polygons)
-    # Alternating gray shades to make lane boundaries visible
     lane_colors = [(90, 90, 90), (95, 95, 95), (90, 90, 90), (95, 95, 95)]
-    
     for i, lane_poly in enumerate(LANES_TO_DRAW):
-        # Draw the solid lane surface
         pygame.draw.polygon(screen, lane_colors[i], lane_poly)
-        # Draw a fine border around each lane to make them stand out
         pygame.draw.polygon(screen, (120, 120, 120), lane_poly, 2)
 
-    # 2. DRAW PERSPECTIVE LANE SEPARATORS (Yellow dashed lines)
-    # We trace along the internal shared edges of your road coordinates
+    # 2. DRAW ANIMATED PERSPECTIVE LANE SEPARATORS (Yellow dashed lines)
+    num_dashes = 6  # Number of visible dash steps along the line
+    
     for i in range(len(LANES_TO_DRAW) - 1):
-        # The shared point at the top (vanishing point)
-        top_line_pt = LANES_TO_DRAW[i][2] 
-        # The shared point at the bottom (foreground)
-        bottom_line_pt = LANES_TO_DRAW[i][1] 
-        pygame.draw.line(screen, (255, 255, 0), top_line_pt, bottom_line_pt, 4)
+        # Establish Vector structures for precision interpolation calculations
+        top_line_pt = pygame.math.Vector2(LANES_TO_DRAW[i][2]) 
+        bottom_line_pt = pygame.math.Vector2(LANES_TO_DRAW[i][1]) 
+        
+        # Look ahead and behind by 1 index to prevent clipping artifacts at edge boundaries
+        for j in range(-1, num_dashes + 1):
+            # Calculate linear start/end position of the current dash chunk
+            t_start = (j + road_offset) / num_dashes
+            t_end = (j + road_offset + 0.4) / num_dashes  # 0.4 determines dash visual spacing
+            
+            # Confine math bounds safely within vector tracking spaces
+            t_start = max(0.0, min(1.0, t_start))
+            t_end = max(0.0, min(1.0, t_end))
+            
+            # Squaring the values applies a perspective warp (exponentially faster near bottom)
+            p_start = t_start ** 2
+            p_end = t_end ** 2
+            
+            # Map tracking points along the lane boundary line
+            start_draw_pt = top_line_pt.lerp(bottom_line_pt, p_start)
+            end_draw_pt = top_line_pt.lerp(bottom_line_pt, p_end)
+            
+            # Dynamically increase dash stroke width as it moves closer to foreground
+            line_thickness = int(3 + (p_start * 7))
+            
+            if p_start < p_end:
+                pygame.draw.line(screen, (255, 255, 0), start_draw_pt, end_draw_pt, line_thickness)
 
     # 3. DRAW BORDERS OUTSIDE THE ROAD
-    # Left grass/dirt border
     left_border_poly = [(0, HEIGHT), (LANES_TO_DRAW[0][0][0], HEIGHT), (LANES_TO_DRAW[0][3][0], 180), (0, 180)]
     pygame.draw.polygon(screen, (126, 200, 80), left_border_poly)
 
-    # Right grass/dirt border
     right_border_poly = [(LANES_TO_DRAW[3][1][0], HEIGHT), (WIDTH, HEIGHT), (WIDTH, 180), (LANES_TO_DRAW[3][2][0], 180)]
     pygame.draw.polygon(screen, (126, 200, 80), right_border_poly)
 

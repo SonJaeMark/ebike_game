@@ -1,6 +1,6 @@
 import pygame
 import random
-from core.settings import WIDTH, HEIGHT, player_size, obstacle_y_pos, LANE_A_CENTERLINE, LANE_B_CENTERLINE, LANE_C_CENTERLINE, LANE_D_CENTERLINE, LANES
+from core.settings import WIDTH, HEIGHT, player_size, obstacle_y_pos, LANE_A_CENTERLINE, LANE_B_CENTERLINE, LANE_C_CENTERLINE, LANE_D_CENTERLINE, LANES, difficulty_speed_base
 from entities.obstacles.obs import ObstaclesEnum
 
 class Obstacles:
@@ -12,7 +12,7 @@ class Obstacles:
     def __init__(self):
         self.max_size = player_size  
         self.current_size = self.max_size // 2  # Initialize at half size immediately
-        self.speed = 2
+        self.speed = difficulty_speed_base
         
         self.pos = pygame.math.Vector2(0, 0)
         self.direction = pygame.math.Vector2(0, 0)
