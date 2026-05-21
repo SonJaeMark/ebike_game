@@ -1,6 +1,6 @@
 import pygame
 import sys
-from system.audio_system import init_audio, play_move_sound
+from system.audio_system import init_audio, play_move_sound, play_bato_hit_sound, play_dog_hit_sound, play_cat_hit_sound
 from entities.ebike import Ebike
 from entities.obstacles.obstacles import Obstacles
 from entities.obstacles.obs import ObstaclesEnum
@@ -45,7 +45,7 @@ def reset_full_game_state():
     obstacle = Obstacles()
     score_system = ScoreSystem()
     current_state = 'PLAY'
-    reset_save_flag()  # Allow next game over to save again
+    reset_save_flag()
 
 # ================= CENTRAL APPLICATION LOOP =================
 running = True
@@ -59,29 +59,24 @@ while running:
             running = False
 
         if event.type == pygame.KEYDOWN:
-            # 1. PLAY STATE CONTROLS
             if current_state == 'PLAY':
                 if event.key == pygame.K_SPACE:
                     current_state = 'PAUSE'
-                # else:
-                #     ebike.move(event, play_move_sound)   # <--- In-comment ko muna (old code)
 
-            # 2. PAUSE STATE CONTROLS
             elif current_state == 'PAUSE':
                 if event.key == pygame.K_SPACE:
                     current_state = 'PLAY'
 
-            # 3. GAME OVER STATE CONTROLS
             elif current_state == 'GAME_OVER':
                 if event.key == pygame.K_r:
                     reset_full_game_state()
                 elif event.key == pygame.K_ESCAPE:
                     running = False
 
-    # ================= BAGONG IDINAGDAG - SMOOTH INPUT & UPDATE =================
+    # ================= SMOOTH INPUT & UPDATE =================
     if current_state == 'PLAY':
-        ebike.handle_input(play_move_sound)   # Responsive A/D at Left/Right
-        ebike.update()                        # Smooth lane transition
+        ebike.handle_input(play_move_sound)
+        ebike.update()
 
     # ================= APPLICATION ROUTING EXECUTIVE LAYER =================
     if current_state == 'PLAY':
@@ -91,6 +86,12 @@ while running:
         )
 
         if collision_detected:
+            if obstacle.hit_type == ObstaclesEnum.BATO:
+                play_bato_hit_sound()
+            elif obstacle.hit_type == ObstaclesEnum.DOG:
+                play_dog_hit_sound()
+            elif obstacle.hit_type == ObstaclesEnum.CAT:
+                play_cat_hit_sound()
             life_remaining -= 1
             if life_remaining <= 0:
                 current_state = 'GAME_OVER'
