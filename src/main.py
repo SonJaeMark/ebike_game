@@ -62,8 +62,8 @@ while running:
             if current_state == 'PLAY':
                 if event.key == pygame.K_SPACE:
                     current_state = 'PAUSE'
-                else:
-                    ebike.move(event, play_move_sound)
+                # else:
+                #     ebike.move(event, play_move_sound)   # <--- In-comment ko muna (old code)
 
             # 2. PAUSE STATE CONTROLS
             elif current_state == 'PAUSE':
@@ -76,6 +76,11 @@ while running:
                     reset_full_game_state()
                 elif event.key == pygame.K_ESCAPE:
                     running = False
+
+    # ================= BAGONG IDINAGDAG - SMOOTH INPUT & UPDATE =================
+    if current_state == 'PLAY':
+        ebike.handle_input(play_move_sound)   # Responsive A/D at Left/Right
+        ebike.update()                        # Smooth lane transition
 
     # ================= APPLICATION ROUTING EXECUTIVE LAYER =================
     if current_state == 'PLAY':
