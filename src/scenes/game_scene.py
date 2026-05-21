@@ -8,7 +8,7 @@ def in_game_scene(screen, clock, dt, ebike, obstacle, score_system, font, delaro
     if 'road_offset' not in globals():
         globals()['road_offset'] = 0.0
         
-    road_speed = 4.0 # Adjust or bind to difficulty settings
+    road_speed = 0.8 # Adjust or bind to difficulty settings
     
     # 1. Update Game/Road Mechanics State
     score_system.update(dt)
@@ -26,7 +26,7 @@ def in_game_scene(screen, clock, dt, ebike, obstacle, score_system, font, delaro
         pygame.draw.polygon(screen, (120, 120, 120), lane_poly, 2)
 
     # 4. Draw Animated Perspective Lane Separators (Yellow dashed lines)
-    num_dashes = 6
+    num_dashes = 5
     for i in range(len(LANES_TO_DRAW) - 1):
         top_line_pt = pygame.math.Vector2(LANES_TO_DRAW[i][2]) 
         bottom_line_pt = pygame.math.Vector2(LANES_TO_DRAW[i][1]) 
@@ -44,7 +44,7 @@ def in_game_scene(screen, clock, dt, ebike, obstacle, score_system, font, delaro
             start_draw_pt = top_line_pt.lerp(bottom_line_pt, p_start)
             end_draw_pt = top_line_pt.lerp(bottom_line_pt, p_end)
             
-            line_thickness = int(3 + (p_start * 7))
+            line_thickness = int(6 + (p_start * 7))
             if p_start < p_end:
                 pygame.draw.line(screen, (255, 255, 0), start_draw_pt, end_draw_pt, line_thickness)
 
