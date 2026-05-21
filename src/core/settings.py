@@ -44,3 +44,6 @@ obstacle_y_pos = HEIGHT // 4
 obstacle_size = 64
 
 life_points = 3
+
+initial_score = 0
+dodge_bonus = 10

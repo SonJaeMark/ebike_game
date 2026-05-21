@@ -6,7 +6,7 @@ from entities.obstacles.obstacles import Obstacles
 from core.settings import WIDTH, HEIGHT, FPS, ebike_size, life_points
 
 # Scene Function Imports
-from scenes.game_scene import in_game_scene, pause_menu, game_over
+from scenes.game_scene import in_game_scene, pause_menu, game_over, reset_save_flag
 from system.scoring_system import ScoreSystem
 from core.settings import ROAD_A, ROAD_B, ROAD_C, ROAD_D
 
@@ -33,7 +33,6 @@ delarosa_img = pygame.image.load('src/assets/images/delarosa.webp').convert_alph
 delarosa_img = pygame.transform.scale(delarosa_img, (40, 40))
 
 # ================= ROUTING CONTEXT MANAGEMENT SYSTEM =================
-# Valid runtime state contexts: 'PLAY', 'PAUSE', 'GAME_OVER'
 current_state = 'PLAY'
 life_remaining = life_points
 
@@ -45,6 +44,7 @@ def reset_full_game_state():
     obstacle = Obstacles()
     score_system = ScoreSystem()
     current_state = 'PLAY'
+    reset_save_flag()  # Allow next game over to save again
 
 # ================= CENTRAL APPLICATION LOOP =================
 running = True
@@ -56,7 +56,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-            
+
         if event.type == pygame.KEYDOWN:
             # 1. PLAY STATE CONTROLS
             if current_state == 'PLAY':
@@ -64,43 +64,39 @@ while running:
                     current_state = 'PAUSE'
                 else:
                     ebike.move(event, play_move_sound)
-                    
+
             # 2. PAUSE STATE CONTROLS
             elif current_state == 'PAUSE':
                 if event.key == pygame.K_SPACE:
                     current_state = 'PLAY'
-                    
+
             # 3. GAME OVER STATE CONTROLS
             elif current_state == 'GAME_OVER':
                 if event.key == pygame.K_r:
                     reset_full_game_state()
-                if event.key == pygame.K_ESCAPE:
+                elif event.key == pygame.K_ESCAPE:
                     running = False
 
     # ================= APPLICATION ROUTING EXECUTIVE LAYER =================
     if current_state == 'PLAY':
-        # Execute active gameplay script frame
         collision_detected = in_game_scene(
-            screen, clock, dt, ebike, obstacle, score_system, font, 
+            screen, clock, dt, ebike, obstacle, score_system, font,
             delarosa_img, LANES_TO_DRAW, WIDTH, HEIGHT
         )
-        
+
         if collision_detected:
             life_remaining -= 1
             if life_remaining <= 0:
                 current_state = 'GAME_OVER'
-                
-        # Draw HUD overlays on top of the live action frame layout
+
         score_system.draw(screen, font)
         for i in range(life_remaining):
             screen.blit(delarosa_img, (20 + (i * 50), 60))
 
     elif current_state == 'PAUSE':
-        # Draw freeze-frame environment state behind translucent pause screen window element
         pause_menu(screen, font, WIDTH, HEIGHT)
 
     elif current_state == 'GAME_OVER':
-        # Pivot canvas display processing tracking frame directly to game over layout
         game_over(screen, font, score_system, WIDTH, HEIGHT)
 
     pygame.display.flip()

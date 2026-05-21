@@ -6,6 +6,7 @@ def init_audio():
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(-1)
 
+
 def play_move_sound():
     pygame.mixer.Sound('src/assets/carmoves.wav').play()
 
@@ -13,7 +14,4 @@ def play_dog_hit_sound():
     pygame.mixer.Sound('src/assets/dog.mp3').play()
 
 def play_cat_hit_sound():
-    try:
-        pygame.mixer.Sound('src/assets/cat.mp3').play()
-    except Exception as e:
-        print(f"Cat sound error: {e}")
+    pygame.mixer.Sound('src/assets/cat.mp3').play()
