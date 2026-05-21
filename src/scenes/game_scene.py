@@ -28,7 +28,7 @@ def in_game_scene(screen, clock, dt, ebike, obstacle, score_system, font, delaro
     if 'road_offset' not in globals():
         globals()['road_offset'] = 0.0
         
-    road_speed = 4.0
+    road_speed = 1.0
     
     score_system.update(dt)
     globals()['road_offset'] += (road_speed * (dt / 1000.0))
