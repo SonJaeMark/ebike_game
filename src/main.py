@@ -3,6 +3,7 @@ import sys
 from system.audio_system import init_audio, play_move_sound
 from entities.ebike import Ebike
 from entities.obstacles.obstacles import Obstacles
+from entities.obstacles.obs import ObstaclesEnum
 from core.settings import WIDTH, HEIGHT, FPS, ebike_size, life_points
 
 # Scene Function Imports
