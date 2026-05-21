@@ -1,8 +1,9 @@
 import pygame
-from system.audio_system import play_move_sound, play_dog_hit_sound, play_cat_hit_sound
+from system.audio_system import play_move_sound, play_dog_hit_sound, play_cat_hit_sound, play_game_over_music, stop_game_over_music
 from entities.obstacles.obs import ObstaclesEnum
 
 _score_saved = False
+_game_over_music_playing = False
 
 def save_score_once(score_system):
     global _score_saved
@@ -11,49 +12,55 @@ def save_score_once(score_system):
         _score_saved = True
 
 def reset_save_flag():
-    global _score_saved
+    global _score_saved, _game_over_music_playing
     _score_saved = False
+    _game_over_music_playing = False
+    stop_game_over_music()
+
+def play_game_over_music_once():
+    global _game_over_music_playing
+    if not _game_over_music_playing:
+        play_game_over_music()
+        _game_over_music_playing = True
 
 def in_game_scene(screen, clock, dt, ebike, obstacle, score_system, font, delarosa_img, LANES_TO_DRAW, WIDTH, HEIGHT):
     global road_offset
     if 'road_offset' not in globals():
         globals()['road_offset'] = 0.0
         
-    road_speed = 0.8 # Adjust or bind to difficulty settings
+    road_speed = 4.0
     
-    # 1. Update Game/Road Mechanics State
     score_system.update(dt)
     globals()['road_offset'] += (road_speed * (dt / 1000.0))
     if globals()['road_offset'] >= 1.0:
         globals()['road_offset'] -= 1.0
 
-    screen.fill((135, 206, 235))
+    screen.fill((135, 206, 235)) 
 
     lane_colors = [(90, 90, 90), (95, 95, 95), (90, 90, 90), (95, 95, 95)]
     for i, lane_poly in enumerate(LANES_TO_DRAW):
         pygame.draw.polygon(screen, lane_colors[i], lane_poly)
         pygame.draw.polygon(screen, (120, 120, 120), lane_poly, 2)
 
-    # 4. Draw Animated Perspective Lane Separators (Yellow dashed lines)
-    num_dashes = 5
+    num_dashes = 6
     for i in range(len(LANES_TO_DRAW) - 1):
-        top_line_pt = pygame.math.Vector2(LANES_TO_DRAW[i][2])
-        bottom_line_pt = pygame.math.Vector2(LANES_TO_DRAW[i][1])
-
+        top_line_pt = pygame.math.Vector2(LANES_TO_DRAW[i][2]) 
+        bottom_line_pt = pygame.math.Vector2(LANES_TO_DRAW[i][1]) 
+        
         for j in range(-1, num_dashes + 1):
             t_start = (j + globals()['road_offset']) / num_dashes
             t_end = (j + globals()['road_offset'] + 0.4) / num_dashes
-
+            
             t_start = max(0.0, min(1.0, t_start))
             t_end = max(0.0, min(1.0, t_end))
-
+            
             p_start = t_start ** 2
             p_end = t_end ** 2
-
+            
             start_draw_pt = top_line_pt.lerp(bottom_line_pt, p_start)
             end_draw_pt = top_line_pt.lerp(bottom_line_pt, p_end)
             
-            line_thickness = int(6 + (p_start * 7))
+            line_thickness = int(3 + (p_start * 7))
             if p_start < p_end:
                 pygame.draw.line(screen, (255, 255, 0), start_draw_pt, end_draw_pt, line_thickness)
 
@@ -65,7 +72,7 @@ def in_game_scene(screen, clock, dt, ebike, obstacle, score_system, font, delaro
 
     old_y = obstacle.rect.y
     obstacle.draw(screen)
-
+    
     if old_y <= HEIGHT and obstacle.rect.y < old_y:
         score_system.add_dodge_bonus()
 
@@ -87,14 +94,14 @@ def pause_menu(screen, font, WIDTH, HEIGHT):
 
     pause_text = font.render("GAME PAUSED", True, (255, 255, 255))
     hint_text = font.render("Press SPACE to Resume", True, (200, 200, 200))
-
+    
     screen.blit(pause_text, (WIDTH // 2 - pause_text.get_width() // 2, HEIGHT // 2 - 40))
     screen.blit(hint_text, (WIDTH // 2 - hint_text.get_width() // 2, HEIGHT // 2 + 20))
 
 def game_over(screen, font, score_system, WIDTH, HEIGHT):
     """Game Over terminal state rendering layout."""
-    # Save score once — does NOT affect the screen rendering below
     save_score_once(score_system)
+    play_game_over_music_once()
 
     screen.fill((20, 20, 20))
 

@@ -15,3 +15,10 @@ def play_dog_hit_sound():
 
 def play_cat_hit_sound():
     pygame.mixer.Sound('src/assets/cat.mp3').play()
+
+def play_game_over_music():
+    pygame.mixer.music.load('src/assets/weak.mp3')
+    pygame.mixer.music.play(-1)
+
+def stop_game_over_music():
+    pygame.mixer.music.stop()
