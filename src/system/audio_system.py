@@ -24,3 +24,8 @@ def play_game_over_music():
 
 def stop_game_over_music():
     pygame.mixer.music.stop()
+
+def play_in_game_music():
+    pygame.mixer.music.load('src/assets/during game music.mp3')
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(-1)
