@@ -130,21 +130,28 @@ def pause_menu(screen, font, WIDTH, HEIGHT, pause_image):
         pause_surface = pygame.transform.smoothscale(pause_image, (WIDTH, HEIGHT))
         screen.blit(pause_surface, (0, 0))
 
-def game_over(screen, font, score_system, WIDTH, HEIGHT, player_name):
-    """Game Over terminal state rendering layout."""
+def game_over(screen, font, score_system, WIDTH, HEIGHT, player_name, game_over_video):
+    """Game Over terminal state rendering layout with video background."""
     save_score_once(score_system, player_name)
     play_game_over_music_once()
 
-    screen.fill((20, 20, 20))
-
-    game_over_text = font.render("GAME OVER", True, (255, 50, 50))
-    score_msg = f"Final Score: {score_system.score}"
-    score_text = font.render(score_msg, True, (255, 255, 255))
-    restart_text = font.render("Press R to Restart or ESC to Quit", True, (150, 150, 150))
-
-    screen.blit(game_over_text, (WIDTH // 2 - game_over_text.get_width() // 2, HEIGHT // 2 - 60))
-    screen.blit(score_text, (WIDTH // 2 - score_text.get_width() // 2, HEIGHT // 2))
-    screen.blit(restart_text, (WIDTH // 2 - restart_text.get_width() // 2, HEIGHT // 2 + 60))
+    # Read and display the game over video background
+    ret, frame = game_over_video.read()
+    if ret:
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame = cv2.resize(frame, (WIDTH, HEIGHT))
+        frame_surface = pygame.image.frombuffer(frame.tobytes(), (WIDTH, HEIGHT), "RGB")
+        screen.blit(frame_surface, (0, 0))
+    else:
+        game_over_video.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        ret, frame = game_over_video.read()
+        if ret:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frame = cv2.resize(frame, (WIDTH, HEIGHT))
+            frame_surface = pygame.image.frombuffer(frame.tobytes(), (WIDTH, HEIGHT), "RGB")
+            screen.blit(frame_surface, (0, 0))
+    score_text = font.render(str(score_system.score), True, (255, 255, 255))
+    screen.blit(score_text, (WIDTH // 2 - score_text.get_width() // 2, HEIGHT // 2 - score_text.get_height() // 2))
 
 def game_menu(screen, font, WIDTH, HEIGHT, menu_image):
     """Render the opening menu with the menu image."""

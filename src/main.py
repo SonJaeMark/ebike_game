@@ -41,6 +41,7 @@ leaderboard_image = pygame.image.load('src/assets/leaderboard.png').convert_alph
 # ================= VIDEO INITIALIZATION =================
 game_bg_video = cv2.VideoCapture('src/assets/game_bg.mp4')
 game_bg_fps = game_bg_video.get(cv2.CAP_PROP_FPS)
+game_over_video = cv2.VideoCapture('src/assets/game_over.mp4')
 
 # ================= ROUTING CONTEXT MANAGEMENT SYSTEM =================
 current_state = 'MENU'
@@ -176,7 +177,7 @@ while running:
         get_player_name(screen, font, WIDTH, HEIGHT, menu_image, pending_name)
 
     elif current_state == 'GAME_OVER':
-        game_over(screen, font, score_system, WIDTH, HEIGHT, player_name)
+        game_over(screen, font, score_system, WIDTH, HEIGHT, player_name, game_over_video)
 
     if current_state in {'MENU', 'PAUSE', 'PLAY', 'LEADERBOARD'} and previous_state != current_state:
         restart_in_game_music()
@@ -185,5 +186,6 @@ while running:
     pygame.display.flip()
 
 game_bg_video.release()
+game_over_video.release()
 pygame.quit()
 sys.exit()
