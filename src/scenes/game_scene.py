@@ -3,7 +3,7 @@ import os
 import pygame
 import cv2
 import numpy as np
-from system.audio_system import play_move_sound, play_dog_hit_sound, play_cat_hit_sound, play_game_over_music, stop_game_over_music
+from system.audio_system import init_audio, play_dog_hit_sound, play_cat_hit_sound, play_game_over_music, stop_game_over_music
 from entities.obstacles.obs import ObstaclesEnum
 
 _score_saved = False
@@ -27,13 +27,14 @@ def play_game_over_music_once():
         play_game_over_music()
         _game_over_music_playing = True
 
-def in_game_scene(screen, clock, dt, ebike, obstacle, score_system, font, delarosa_img, LANES_TO_DRAW, WIDTH, HEIGHT, game_bg_video):
+def in_game_scene(screen, clock, dt, ebike, obstacles, score_system, font, delarosa_img, LANES_TO_DRAW, WIDTH, HEIGHT, game_bg_video, level=1):
     global road_offset
     if 'road_offset' not in globals():
         globals()['road_offset'] = 0.0
     
     
-    road_speed = 1.0
+    # base road speed; doubled in level 3
+    road_speed = 1.0 * (2 if level == 3 else 1)
     
     score_system.update(dt)
     globals()['road_offset'] += (road_speed * (dt / 1000.0))
@@ -48,6 +49,12 @@ def in_game_scene(screen, clock, dt, ebike, obstacle, score_system, font, delaro
         frame = np.transpose(frame, (1, 0, 2))
         frame_surface = pygame.image.frombuffer(frame.tobytes(), (HEIGHT, WIDTH), "RGB")
         screen.blit(pygame.transform.rotate(frame_surface, -90), (0, 0))
+        # speed up video playback for level 3 by advancing one extra frame
+        if level == 3:
+            try:
+                game_bg_video.grab()
+            except Exception:
+                pass
     else:
         # Loop video
         game_bg_video.set(cv2.CAP_PROP_POS_FRAMES, 0)
@@ -58,6 +65,11 @@ def in_game_scene(screen, clock, dt, ebike, obstacle, score_system, font, delaro
             frame = np.transpose(frame, (1, 0, 2))
             frame_surface = pygame.image.frombuffer(frame.tobytes(), (HEIGHT, WIDTH), "RGB")
             screen.blit(pygame.transform.rotate(frame_surface, -90), (0, 0))
+            if level == 3:
+                try:
+                    game_bg_video.grab()
+                except Exception:
+                    pass
 
     # ================= ROAD CONFIGURATION =================
     # Commented out: road and left/right green borders
@@ -96,22 +108,21 @@ def in_game_scene(screen, clock, dt, ebike, obstacle, score_system, font, delaro
     right_border_poly = [(LANES_TO_DRAW[3][1][0], HEIGHT), (WIDTH, HEIGHT), (WIDTH, 180), (LANES_TO_DRAW[3][2][0], 180)]
     # pygame.draw.polygon(screen, (126, 200, 80), right_border_poly)
 
-    old_y = obstacle.rect.y
-    obstacle.draw(screen)
-    
-    if old_y <= HEIGHT and obstacle.rect.y < old_y:
-        score_system.add_dodge_bonus()
+    # Support multiple obstacles: `obstacles` is expected to be a list
+    for obs in obstacles:
+        old_y = obs.rect.y
+        obs.draw(screen)
+
+        if old_y <= HEIGHT and obs.rect.y < old_y:
+            score_system.add_dodge_bonus()
+
+        if ebike.is_colliding(obs):
+            hit_type = obs.type
+            obs.reset()
+            return hit_type
 
     ebike.draw(screen)
-
-    if ebike.is_colliding(obstacle):
-        if obstacle.type == ObstaclesEnum.DOG:
-            play_dog_hit_sound()
-        elif obstacle.type == ObstaclesEnum.CAT:
-            play_cat_hit_sound()
-        obstacle.reset()
-        return True
-    return False
+    return None
 
 def pause_menu(screen, font, WIDTH, HEIGHT, pause_image):
     screen.fill((0, 0, 0))
