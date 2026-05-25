@@ -108,7 +108,7 @@ while running:
                     current_state = 'NAME_INPUT'
                 elif event.key == pygame.K_ESCAPE:
                     current_state = 'MENU'
-                    running = False
+
 
             elif current_state == 'LEADERBOARD':
                 if event.key == pygame.K_ESCAPE:
