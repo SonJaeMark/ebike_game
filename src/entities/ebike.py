@@ -93,13 +93,6 @@ class Ebike:
         if not (keys[pygame.K_RIGHT] or keys[pygame.K_d]):
             self.moving_right = False
 
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
-            if self.y > self.top_y + 20:
-                self.y -= 8
-        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            if self.y < self.bottom_y - self.size[1]:
-                self.y += 8
-
     def update(self):
         self.update_lane()
         self.snap_to_perspective_lane()
