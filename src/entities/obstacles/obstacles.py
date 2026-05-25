@@ -19,11 +19,13 @@ class Obstacles:
         self.direction = pygame.math.Vector2(0, 0)
 
         self.type = None
+        self.hit_type = None  # 👈 added
         self.master_image = None
         self.image = None
         self.reset()
 
     def reset(self):
+        self.hit_type = self.type  # 👈 save before overwriting
         self.type = random.choice(list(ObstaclesEnum))
         self.current_size = self.max_size // 2
         self.load_image()
@@ -83,4 +85,3 @@ class Obstacles:
     @property
     def rect(self):
         return pygame.Rect(int(self.pos.x), int(self.pos.y), self.current_size, self.current_size)
-        

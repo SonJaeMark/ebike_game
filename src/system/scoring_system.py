@@ -22,8 +22,8 @@ class ScoreSystem:
         score_text = font.render(f"Score: {self.score}", True, (255, 255, 255))
         screen.blit(score_text, (20, 20))
 
-    def save_to_leaderboard(self):
-        """Append current score to leaderboard.json, sorted descending."""
+    def save_to_leaderboard(self, player_name):
+        """Append current score and player name to leaderboard.json, sorted descending."""
         path = self.leaderboard_path
 
         if os.path.exists(path):
@@ -35,7 +35,10 @@ class ScoreSystem:
         else:
             scores = []
 
-        scores.append({"score": self.score})
+        scores.append({
+            "name": player_name or "PLAYER",
+            "score": self.score
+        })
         scores.sort(key=lambda x: x["score"], reverse=True)
 
         with open(path, 'w') as f:
