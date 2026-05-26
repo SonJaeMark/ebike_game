@@ -1,66 +1,10 @@
 [
   {
-<<<<<<< HEAD
-    "score": 80
+    "name": "simon",
+    "score": 1021
   },
   {
-    "score": 50
-  },
-  {
-    "score": 37
-  },
-  {
-    "score": 35
-  },
-  {
-    "score": 24
-  },
-  {
-    "score": 22
-  },
-  {
-    "score": 22
-  },
-  {
-    "score": 21
-  },
-  {
-    "score": 6
-=======
-    "name": "Kuripo",
-    "score": 185
-  },
-  {
-    "name": "kkkkkkk",
-    "score": 80
-  },
-  {
-    "name": "MJ",
-    "score": 45
-  },
-  {
-    "name": "Pearlyyy",
-    "score": 45
-  },
-  {
-    "name": "Jun Kook",
-    "score": 36
-  },
-  {
-    "name": "MJ",
-    "score": 13
-  },
-  {
-    "name": "JM",
-    "score": 11
-  },
-  {
-    "name": "Anne",
-    "score": 10
-  },
-  {
-    "name": "DeanDoor",
-    "score": 9
->>>>>>> 40d1cfc0ef2fede372798728d76f866b97895dc7
+    "name": "hakuge",
+    "score": 300
   }
 ]
