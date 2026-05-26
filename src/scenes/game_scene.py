@@ -220,3 +220,12 @@ def get_player_name(screen, font, WIDTH, HEIGHT, menu_image, player_name):
     screen.blit(prompt_text, (WIDTH // 2 - prompt_text.get_width() // 2, HEIGHT // 2 + 80))
     screen.blit(name_text, (WIDTH // 2 - name_text.get_width() // 2, HEIGHT // 2 + 140))
     screen.blit(hint_text, (WIDTH // 2 - hint_text.get_width() // 2, HEIGHT // 2 + 200))
+
+
+def mechanics_scene(screen, font, WIDTH, HEIGHT, mechanics_image):
+    """Display the game mechanics image with ESC hint."""
+    screen.fill((0, 0, 0))
+
+    if mechanics_image:
+        mechanics_surface = pygame.transform.smoothscale(mechanics_image, (WIDTH, HEIGHT))
+        screen.blit(mechanics_surface, (0, 0))

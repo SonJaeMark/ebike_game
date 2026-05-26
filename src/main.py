@@ -9,7 +9,7 @@ from entities.obstacles.obs import ObstaclesEnum
 from core.settings import WIDTH, HEIGHT, FPS, ebike_size, life_points
 
 # Scene Function Imports
-from scenes.game_scene import in_game_scene, pause_menu, game_over, game_menu, get_player_name, leaderboard, reset_save_flag, save_score_once
+from scenes.game_scene import in_game_scene, pause_menu, game_over, game_menu, get_player_name, leaderboard, reset_save_flag, save_score_once, mechanics_scene
 from system.scoring_system import ScoreSystem
 from core.settings import ROAD_A, ROAD_B, ROAD_C, ROAD_D
 
@@ -37,6 +37,7 @@ delarosa_img = pygame.transform.scale(delarosa_img, (40, 40))
 menu_image = pygame.image.load('src/assets/game_menu1.png').convert_alpha()
 pause_image = pygame.image.load('src/assets/game_pause1.png').convert_alpha()
 leaderboard_image = pygame.image.load('src/assets/leaderboard.png').convert_alpha()
+mechanics_image = pygame.image.load('src/assets/game_mechanics1.png').convert_alpha()
 
 # ================= VIDEO INITIALIZATION =================
 game_bg_video = cv2.VideoCapture('src/assets/game_bg.mp4')
@@ -88,6 +89,8 @@ while running:
                     pending_name = ""
                 elif event.key == pygame.K_l:
                     current_state = 'LEADERBOARD'
+                elif event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
+                    current_state = 'MECHANICS'
                 elif event.key == pygame.K_ESCAPE:
                     running = False
 
@@ -111,6 +114,10 @@ while running:
 
 
             elif current_state == 'LEADERBOARD':
+                if event.key == pygame.K_ESCAPE:
+                    current_state = 'MENU'
+
+            elif current_state == 'MECHANICS':
                 if event.key == pygame.K_ESCAPE:
                     current_state = 'MENU'
 
@@ -172,6 +179,9 @@ while running:
 
     elif current_state == 'LEADERBOARD':
         leaderboard(screen, font, WIDTH, HEIGHT, leaderboard_image)
+
+    elif current_state == 'MECHANICS':
+        mechanics_scene(screen, font, WIDTH, HEIGHT, mechanics_image)
 
     elif current_state == 'NAME_INPUT':
         get_player_name(screen, font, WIDTH, HEIGHT, menu_image, pending_name)
